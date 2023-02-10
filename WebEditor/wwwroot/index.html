@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>WebEditor</title>
+    <base href="/" />
+    <link href="web-editor.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div>
+        <div class="web-editor" id="monaco">
+        </div>
+        <div class="web-editor console" id="console">
+        </div>
+        <div class="clear" id="clear">
+            清空调试
+        </div>
+        <div class="run" id="run">
+            运行
+        </div>
+    </div>
+    <!-- 设置autostart="false" 将不会自动加载web Assembly程序集 -->
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script>
+        var require = { paths: { 'vs': 'https://cdn.masastack.com/npm/monaco-editor/0.34.1/min/vs' } };
+    </script>
+    <script src="https://cdn.masastack.com/npm/monaco-editor/0.34.1/min/vs/loader.js"></script>
+    <script src="https://cdn.masastack.com/npm/monaco-editor/0.34.1/min/vs/editor/editor.main.nls.js"></script>
+    <script src="https://cdn.masastack.com/npm/monaco-editor/0.34.1/min/vs/editor/editor.main.js"></script>
+    <script>
+        // 等待dom加载完成
+        window.addEventListener('load', function () {
+            // 创建Monaco对象存储在window中
+            window.webeditor = monaco.editor.create(document.getElementById('monaco'), {
+                value: `Console.WriteLine("欢迎使用Token在线编辑器");`, // 设置初始值
+                language: 'csharp', // 设置monaco 语法提示
+                automaticLayout: true, // 跟随父容器大小
+                theme: "vs-dark" // 主题
+            });
+            document.getElementById("run").onclick = () => {
+                // 判断是否首次加载，防止重复启动Blazor
+                if (window?.startBlazor !== true) {
+                    window.startBlazor = true;
+                    console.log(Blazor);
+                    Blazor.start()
+                        .then(function () {
+                            // 调用封装的方法将编辑器的代码传入
+                            execute(window.webeditor.getValue());
+                        })
+                } else {
+                    // 调用封装的方法将编辑器的代码传入
+                    execute(window.webeditor.getValue());
+                }
+            };
+
+            // 清空调试区
+            document.getElementById('clear').onclick = () => {
+                document.getElementById("console").innerText = '';
+            }
+
+            async function execute(code) {
+                // 使用js互操调用WebEditor程序集下的Execute静态方法，并且发送参数
+                code = await DotNet.invokeMethodAsync('WebEditor', 'Execute', code);
+                document.getElementById("console").innerText += code;
+            }
+        })
+
+    </script>
+</body>
+
+</html>

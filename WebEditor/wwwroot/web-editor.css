@@ -1,0 +1,35 @@
+﻿
+.web-editor {
+    height: 98vh;
+    width: 50%;
+    float: left;
+}
+
+/*运行按钮*/
+.run {
+    position: fixed; /*悬浮*/
+    height: 23px;
+    width: 34px;
+    right: 8px; /*靠右上角*/
+    cursor: pointer; /*显示手指*/
+    background: #3d5fab; /*背景颜色*/
+    border-radius: 6px; 
+    user-select: none; /*禁止选择*/
+}
+
+/*清楚按钮*/
+.clear {
+    position: fixed;
+    height: 23px;
+    width: 69px;
+    right: 45px;
+    cursor: pointer;
+    background: #fd0707;
+    border-radius: 6px;
+    user-select: none;
+}
+
+.console {
+    background-color: dimgray;
+    color: aliceblue;
+}
